@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "awsreactchat",
+    "serviceName": "AppSync",
+    "gqlSchemaPath": "/Users/s422714/Documents/Workspace/aws-react-chat/amplify/backend/api/awsreactchat/schema.graphql",
+    "defaultAuthType": {
+      "mode": "API_KEY",
+      "expirationTime": 7
+    }
+  }
+}

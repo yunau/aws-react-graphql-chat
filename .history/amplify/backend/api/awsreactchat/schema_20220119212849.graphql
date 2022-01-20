@@ -1,0 +1,52 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+type User 
+  @model 
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  username: String!
+}
+
+type Conversation
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  name: String!
+}
+
+type Message 
+  @model(subscriptions: null, queries: null) 
+  @auth(rules: [{ allow: owner, ownerField: "authorId" }]) {
+  id: ID!
+  author: User @connection(name: "UserMessages", keyField: "authorId")
+  authorId: String
+  content: String!
+  conversation: Conversation! @connection(name: "ConvoMsgs")
+  messageConversationId: ID!
+	createdAt: String
+	updatedAt: String
+}
+
+type ConvoLink 
+  @model(
+    mutations: { create: "createConvoLink", update: "updateConvoLink" }
+    queries: null
+    subscriptions: null
+  ) {
+  id: ID!
+  user: User! @connection(name: "UserLinks")
+  convoLinkUserId: ID
+  conversation: Conversation! @connection(name: "AssociatedLinks")
+  convoLinkConversationId: ID!
+	createdAt: String
+	updatedAt: String
+}
+
+type Subscription {
+  onCreateConvoLink(convoLinkUserId: ID!): ConvoLink
+    @aws_subscribe(mutations: ["createConvoLink"])
+  onCreateMessage(messageConversationId: ID!): Message
+    @aws_subscribe(mutations: ["createMessage"])
+}
